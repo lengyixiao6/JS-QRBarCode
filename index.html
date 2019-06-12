@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+
+<head>
+<title>二维码生成</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+<script type="text/javascript" src="http://static.runoob.com/assets/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://static.runoob.com/assets/qrcode/qrcode.min.js"></script>
+</head>
+
+<body style="margin-left: 10%; margin-right: 10%; padding-top: 10px">
+<span style="position: fixed; top:0; background-color: blanchedalmond; left: 10%; right: 10%; text-align:center; padding-bottom: 10px">
+    <span>
+    前缀信息
+    <input id="text" type="text" value="S001" style="width: 150px" />
+    &nbsp &nbsp &nbsp &nbsp
+    序号区间
+    <input id="text1" type="number" value="1" style="width: 60px; text-align:right"/>&nbsp—&nbsp
+    <input id="text2" type="number" value="12" style="width: 60px; text-align:right"/>
+    &nbsp &nbsp &nbsp &nbsp
+<button style="background-color: #008CBA;
+        color: white;
+        padding: 4px 8px;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 14px;"
+        onclick="makeCode()">生成二维码</button>
+    </span>
+</span>
+<div id="content" style="width:100%; background-color: white; margin-top: 50px;  display: flex; flex-wrap: wrap;"></div>
+<div style="width:100%; height: 150px; background-color: white;"></div>
+
+<script type="text/javascript">
+function setDiv(itemId, itemInfo){
+    return '<div style="margin-top: 50px; margin-left: 60px; width: 180px;" align="center">' +
+        '<div id="'+itemId + '" style="width: 160px; height: 160px;"></div>' +
+        '<div style="text-align:center; margin-top: 5px; font-size: 14px">'+itemInfo+'</div>' +
+        '</div>';
+}
+
+function makeNode (itemId) {
+    return new QRCode(document.getElementById(itemId), {
+        width : 160,
+        height : 160
+    });
+}
+
+function PrefixInteger(num) {
+    return (Array(4).join('0') + num).slice(-4);
+}
+
+function makeCode () {
+	var elText = document.getElementById("text");
+    var number1 = parseInt(document.getElementById("text1").value);
+    var number2 = parseInt(document.getElementById("text2").value);
+
+    if (!elText.value) {
+        alert("请输入二维码前缀信息");
+        elText.focus();
+        return;
+    }
+    if (number1 < 0 || number2 < 0) {
+        alert("序号区间必须为整数!");
+        return;
+    }
+    if (number1 > number2) {
+        alert("序号区间结束值小于开始值!");
+        return;
+    }
+
+    // 循环创建
+    var content = document.getElementById("content");
+    var html = '';
+    for (var k = number1; k <= number2; k++) {
+        var item = "id_"+PrefixInteger(k);
+        var info = elText.value + '-' + PrefixInteger(k);
+        html += setDiv(item, info);
+    }
+    content.innerHTML = html;
+
+    for (var i = number1; i <= number2; i++) {
+
+        var itemId = "id_"+PrefixInteger(i);
+        var qrcode = makeNode(itemId);
+
+        var qrInfo = elText.value + '-' + PrefixInteger(i);
+        qrcode.makeCode(qrInfo);
+    }
+}
+
+makeCode();
+
+</script>
+</body>
+</html>
